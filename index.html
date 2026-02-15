@@ -100,6 +100,11 @@
       animation: btn-shine 3s ease-in-out infinite;
     }
 
+    @keyframes btn-shine {
+      0% { transform: translateX(-100%) rotate(25deg); }
+      100% { transform: translateX(100%) rotate(25deg); }
+    }
+
     .main-button::after {
       content: '';
       position: absolute;
@@ -820,7 +825,6 @@
       }, 3000);
     }
 
-    // ── Sparkles on the gauge ──
     // ── Confetti burst on start ──
     function spawnConfettiBurst() {
       var colors = ['#ff4500', '#ffd700', '#ff6600', '#ff0000', '#ffaa00', '#fff', '#ff3366'];
