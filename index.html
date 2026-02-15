@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>手機版暖暖包 🔥 Phone Heater</title>
+  <title>🔥 手機版暖暖包</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      font-family: 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
       min-height: 100vh;
       overflow: hidden;
       touch-action: manipulation;
@@ -45,12 +45,26 @@
       text-align: center;
       margin-bottom: 8px;
       text-shadow: 0 2px 10px rgba(255, 100, 0, 0.5);
+      animation: title-bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes title-bounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      25% { transform: translateY(-6px) scale(1.03); }
+      50% { transform: translateY(0) scale(1); }
+      75% { transform: translateY(-3px) scale(1.01); }
     }
 
     .subtitle {
       color: rgba(255, 255, 255, 0.7);
       font-size: clamp(0.8rem, 2.5vw, 1rem);
       margin-bottom: 24px;
+      animation: subtitle-fade 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes subtitle-fade {
+      0% { opacity: 0.6; letter-spacing: 0px; }
+      100% { opacity: 1; letter-spacing: 2px; }
     }
 
     /* Thermometer Gauge */
@@ -84,6 +98,15 @@
       transition: height 0.5s ease;
     }
 
+    .gauge-fill.active {
+      animation: gauge-shimmer 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes gauge-shimmer {
+      0% { filter: brightness(1); }
+      100% { filter: brightness(1.4); }
+    }
+
     .gauge-bulb {
       position: absolute;
       bottom: -10px;
@@ -102,12 +125,18 @@
 
     .gauge-bulb.active {
       box-shadow: 0 0 30px rgba(255, 69, 0, 0.8), 0 0 60px rgba(255, 69, 0, 0.4);
-      animation: pulse-glow 1.5s ease-in-out infinite;
+      animation: pulse-glow 1.5s ease-in-out infinite, bulb-wiggle 0.5s ease-in-out infinite;
     }
 
     @keyframes pulse-glow {
       0%, 100% { box-shadow: 0 0 30px rgba(255, 69, 0, 0.8), 0 0 60px rgba(255, 69, 0, 0.4); }
       50% { box-shadow: 0 0 50px rgba(255, 69, 0, 1), 0 0 100px rgba(255, 69, 0, 0.6); }
+    }
+
+    @keyframes bulb-wiggle {
+      0%, 100% { transform: translateX(-50%) rotate(0deg); }
+      25% { transform: translateX(-50%) rotate(2deg); }
+      75% { transform: translateX(-50%) rotate(-2deg); }
     }
 
     .temp-display {
@@ -125,6 +154,24 @@
       color: rgba(255,255,255,0.7);
       font-size: 0.7rem;
       white-space: nowrap;
+    }
+
+    /* Sparkle on gauge */
+    .sparkle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      pointer-events: none;
+      animation: sparkle-pop 0.8s ease-out forwards;
+      z-index: 5;
+    }
+
+    @keyframes sparkle-pop {
+      0% { opacity: 1; transform: scale(0) rotate(0deg); }
+      50% { opacity: 1; transform: scale(1.5) rotate(180deg); }
+      100% { opacity: 0; transform: scale(0) rotate(360deg); }
     }
 
     /* Slider */
@@ -147,6 +194,17 @@
       font-size: 1.4rem;
       font-weight: bold;
       color: #ffd700;
+      transition: transform 0.2s ease;
+    }
+
+    .slider-value.pop {
+      animation: value-pop 0.3s ease;
+    }
+
+    @keyframes value-pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
     }
 
     input[type="range"] {
@@ -170,6 +228,11 @@
       border: 3px solid #ff6600;
       box-shadow: 0 0 15px rgba(255, 100, 0, 0.6);
       cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    input[type="range"]:active::-webkit-slider-thumb {
+      transform: scale(1.2);
     }
 
     input[type="range"]::-moz-range-thumb {
@@ -191,31 +254,61 @@
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
       margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+      animation: btn-shine 3s ease-in-out infinite;
+    }
+
+    @keyframes btn-shine {
+      0% { transform: translateX(-100%) rotate(25deg); }
+      100% { transform: translateX(100%) rotate(25deg); }
     }
 
     .btn-start {
       background: linear-gradient(135deg, #ff6600, #ff4500);
       color: #fff;
       box-shadow: 0 4px 20px rgba(255, 69, 0, 0.5);
+      animation: btn-breathe 2s ease-in-out infinite;
+    }
+
+    @keyframes btn-breathe {
+      0%, 100% { box-shadow: 0 4px 20px rgba(255, 69, 0, 0.5); transform: scale(1); }
+      50% { box-shadow: 0 6px 30px rgba(255, 69, 0, 0.7); transform: scale(1.03); }
     }
 
     .btn-start:hover, .btn-start:active {
-      transform: scale(1.05);
+      transform: scale(1.08);
       box-shadow: 0 6px 30px rgba(255, 69, 0, 0.7);
     }
 
     .btn-stop {
-      background: linear-gradient(135deg, #555, #333);
+      background: linear-gradient(135deg, #4488ff, #2266cc);
       color: #fff;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 15px rgba(34, 102, 204, 0.4);
+      animation: btn-shake 0.4s ease-in-out infinite;
+    }
+
+    @keyframes btn-shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-3px); }
+      75% { transform: translateX(3px); }
     }
 
     .btn-stop:hover, .btn-stop:active {
       transform: scale(1.05);
-      background: linear-gradient(135deg, #666, #444);
+      background: linear-gradient(135deg, #5599ff, #3377dd);
     }
 
     /* Status */
@@ -227,6 +320,12 @@
       width: 100%;
       max-width: 320px;
       border: 1px solid rgba(255, 255, 255, 0.1);
+      animation: panel-fade-in 0.6s ease;
+    }
+
+    @keyframes panel-fade-in {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
 
     .status-row {
@@ -246,10 +345,15 @@
       margin-right: 6px;
     }
 
-    .dot-green { background: #4caf50; box-shadow: 0 0 6px #4caf50; }
+    .dot-green { background: #4caf50; box-shadow: 0 0 6px #4caf50; animation: dot-blink 1s ease-in-out infinite; }
     .dot-red { background: #f44336; box-shadow: 0 0 6px #f44336; }
-    .dot-yellow { background: #ffc107; box-shadow: 0 0 6px #ffc107; }
+    .dot-yellow { background: #ffc107; box-shadow: 0 0 6px #ffc107; animation: dot-blink 2s ease-in-out infinite; }
     .dot-gray { background: #666; }
+
+    @keyframes dot-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
 
     .status-value {
       font-weight: 600;
@@ -288,6 +392,44 @@
       }
     }
 
+    @keyframes rise-swirl {
+      0% {
+        opacity: 0.9;
+        transform: translateY(0) translateX(0) scale(1) rotate(0deg);
+      }
+      25% { transform: translateY(-25vh) translateX(20px) scale(0.9) rotate(90deg); }
+      50% { transform: translateY(-50vh) translateX(-15px) scale(0.7) rotate(180deg); }
+      75% { transform: translateY(-75vh) translateX(10px) scale(0.5) rotate(270deg); }
+      100% {
+        opacity: 0;
+        transform: translateY(-100vh) translateX(0) scale(0.2) rotate(360deg);
+      }
+    }
+
+    /* Heat wave distortion overlay */
+    .heat-wave {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40%;
+      pointer-events: none;
+      z-index: 0;
+      background: linear-gradient(to top, rgba(255, 69, 0, 0.08), transparent);
+      animation: heat-wave-pulse 2s ease-in-out infinite alternate;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .heat-wave.active {
+      opacity: 1;
+    }
+
+    @keyframes heat-wave-pulse {
+      0% { transform: scaleY(1); opacity: 0.5; }
+      100% { transform: scaleY(1.15); opacity: 1; }
+    }
+
     /* Warning banner */
     .warning {
       position: fixed;
@@ -312,8 +454,24 @@
     }
 
     @keyframes float-up {
-      0% { opacity: 1; transform: translateY(0) rotate(0deg); }
-      100% { opacity: 0; transform: translateY(-200px) rotate(30deg); }
+      0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(0.5); }
+      30% { opacity: 1; transform: translateY(-60px) rotate(10deg) scale(1.2); }
+      100% { opacity: 0; transform: translateY(-250px) rotate(40deg) scale(0.8); }
+    }
+
+    /* Confetti burst on start */
+    .confetti {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      pointer-events: none;
+      z-index: 5;
+      animation: confetti-fall 1.5s ease-out forwards;
+    }
+
+    @keyframes confetti-fall {
+      0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+      100% { opacity: 0; transform: translateY(200px) rotate(720deg) scale(0.3); }
     }
 
     .hidden { display: none; }
@@ -321,13 +479,14 @@
 </head>
 <body class="bg-cold">
   <div class="flames" id="flames"></div>
+  <div class="heat-wave" id="heatWave"></div>
 
   <div class="container">
     <h1>🔥 手機版暖暖包 🔥</h1>
-    <p class="subtitle">Phone Heater — 讓手機變成暖暖包！</p>
+    <p class="subtitle">讓你的手機變成暖暖包！</p>
 
     <!-- Thermometer Gauge -->
-    <div class="gauge-container">
+    <div class="gauge-container" id="gaugeContainer">
       <div class="gauge-label">🌡️ 溫度計</div>
       <div class="gauge-bg">
         <div class="gauge-fill" id="gaugeFill"></div>
@@ -340,7 +499,7 @@
     <!-- Slider -->
     <div class="slider-section">
       <div class="slider-label">
-        <span>🌡️ 溫度調節 Heat Level</span>
+        <span>🌡️ 溫度調節</span>
         <span class="slider-value" id="sliderValue">50%</span>
       </div>
       <input type="range" id="heatSlider" min="0" max="100" value="50">
@@ -348,36 +507,35 @@
 
     <!-- Start/Stop Buttons -->
     <button class="btn btn-start" id="btnStart" onclick="startHeating()">
-      🔥 開始加熱 START
+      🔥 開始加熱
     </button>
     <button class="btn btn-stop hidden" id="btnStop" onclick="stopHeating()">
-      ❄️ 停止 STOP
+      ❄️ 冷卻停止
     </button>
 
     <!-- Status Panel -->
     <div class="status-panel">
       <div class="status-row">
-        <span><span class="dot dot-gray" id="cpuDot"></span>CPU 負載</span>
-        <span class="status-value" id="cpuStatus">待機 Idle</span>
+        <span><span class="dot dot-gray" id="cpuDot"></span>處理器負載</span>
+        <span class="status-value" id="cpuStatus">待機中</span>
       </div>
       <div class="status-row">
-        <span><span class="dot dot-gray" id="gpuDot"></span>GPU 負載</span>
-        <span class="status-value" id="gpuStatus">待機 Idle</span>
+        <span><span class="dot dot-gray" id="gpuDot"></span>顯示晶片負載</span>
+        <span class="status-value" id="gpuStatus">待機中</span>
       </div>
       <div class="status-row">
-        <span>⚙️ Workers</span>
+        <span>⚙️ 工作執行緒</span>
         <span class="status-value" id="workerCount">0</span>
       </div>
       <div class="status-row">
-        <span>📊 雜湊/秒</span>
+        <span>📊 每秒雜湊數</span>
         <span class="status-value" id="hashRate">0</span>
       </div>
     </div>
   </div>
 
   <div class="warning">
-    ⚠️ 本應用透過密集運算產生熱能。長時間使用請注意手機溫度，隨時可停止。
-    <br>This app generates heat through intensive computation. Monitor your phone temperature.
+    ⚠️ 本應用透過密集運算產生熱能，讓手機發熱。長時間使用請注意手機溫度，隨時可停止。
   </div>
 
   <script>
@@ -406,11 +564,16 @@
     const workerCountEl = document.getElementById('workerCount');
     const hashRateEl = document.getElementById('hashRate');
     const flamesContainer = document.getElementById('flames');
+    const heatWave = document.getElementById('heatWave');
+    const gaugeContainer = document.getElementById('gaugeContainer');
 
     // ── Slider ──
     slider.addEventListener('input', function() {
       heatPercent = parseInt(this.value, 10);
       sliderValue.textContent = heatPercent + '%';
+      sliderValue.classList.remove('pop');
+      void sliderValue.offsetWidth;
+      sliderValue.classList.add('pop');
       if (isRunning) {
         adjustWorkers();
       }
@@ -473,7 +636,10 @@
       btnStart.classList.add('hidden');
       btnStop.classList.remove('hidden');
       gaugeBulb.classList.add('active');
+      gaugeFill.classList.add('active');
+      heatWave.classList.add('active');
 
+      spawnConfettiBurst();
       adjustWorkers();
       startGPU();
       startFlames();
@@ -485,6 +651,8 @@
       btnStop.classList.add('hidden');
       btnStart.classList.remove('hidden');
       gaugeBulb.classList.remove('active');
+      gaugeFill.classList.remove('active');
+      heatWave.classList.remove('active');
 
       // Stop CPU workers
       cpuWorkers.forEach(function(w) {
@@ -502,8 +670,8 @@
       // Reset display
       hashCount = 0;
       updateDots('gray', 'gray');
-      cpuStatus.textContent = '待機 Idle';
-      gpuStatus.textContent = '待機 Idle';
+      cpuStatus.textContent = '待機中';
+      gpuStatus.textContent = '待機中';
       workerCountEl.textContent = '0';
       hashRateEl.textContent = '0';
       gaugeFill.style.height = '0%';
@@ -556,7 +724,7 @@
       }
 
       if (!glContext) {
-        gpuStatus.textContent = '不可用 N/A';
+        gpuStatus.textContent = '不可用';
         gpuDot.className = 'dot dot-yellow';
         return;
       }
@@ -611,7 +779,7 @@
       var fs = compileShader(fsSrc, gl.FRAGMENT_SHADER);
 
       if (!vs || !fs) {
-        gpuStatus.textContent = '錯誤 Error';
+        gpuStatus.textContent = '錯誤';
         gpuDot.className = 'dot dot-red';
         return;
       }
@@ -622,7 +790,7 @@
       gl.linkProgram(program);
 
       if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        gpuStatus.textContent = '錯誤 Error';
+        gpuStatus.textContent = '錯誤';
         gpuDot.className = 'dot dot-red';
         return;
       }
@@ -662,7 +830,7 @@
       }
 
       gpuDot.className = 'dot dot-green';
-      gpuStatus.textContent = '運行中 Active';
+      gpuStatus.textContent = '全力運轉中 🔥';
       renderLoop();
     }
 
@@ -703,15 +871,16 @@
       var particle = document.createElement('div');
       particle.className = 'flame-particle';
       var x = Math.random() * 100;
-      var size = 4 + Math.random() * 10;
+      var size = 4 + Math.random() * 12;
       var duration = 2 + Math.random() * 3;
       var hue = 10 + Math.random() * 40; // orange-red range
+      var useSwirl = Math.random() < 0.3;
       particle.style.left = x + '%';
       particle.style.width = size + 'px';
       particle.style.height = size + 'px';
       particle.style.background = 'hsl(' + hue + ', 100%, 55%)';
-      particle.style.animation = 'rise ' + duration + 's ease-out forwards';
-      particle.style.filter = 'blur(1px)';
+      particle.style.animation = (useSwirl ? 'rise-swirl ' : 'rise ') + duration + 's ease-out forwards';
+      particle.style.filter = 'blur(' + (Math.random() < 0.5 ? '1' : '2') + 'px)';
       flamesContainer.appendChild(particle);
 
       setTimeout(function() {
@@ -749,7 +918,12 @@
       // CPU status
       if (cpuWorkers.length > 0) {
         cpuDot.className = 'dot dot-green';
-        cpuStatus.textContent = '運行中 Active';
+        cpuStatus.textContent = '全力運轉中 🔥';
+      }
+
+      // Sparkles on gauge
+      if (Math.random() < 0.1 && heatPercent > 30) {
+        spawnSparkle();
       }
 
       // Spawn emoji occasionally
@@ -772,7 +946,7 @@
     }
 
     // ── Fun emoji bursts ──
-    var heatEmojis = ['🔥', '🌶️', '☀️', '💥', '✨', '🧡', '❤️‍🔥', '♨️'];
+    var heatEmojis = ['🔥', '🌶️', '☀️', '💥', '✨', '🧡', '❤️‍🔥', '♨️', '🫠', '🥵'];
 
     function spawnEmoji() {
       var emoji = document.createElement('div');
@@ -780,11 +954,50 @@
       emoji.textContent = heatEmojis[Math.floor(Math.random() * heatEmojis.length)];
       emoji.style.left = (10 + Math.random() * 80) + '%';
       emoji.style.top = (20 + Math.random() * 60) + '%';
-      emoji.style.fontSize = (1.2 + Math.random() * 1.5) + 'rem';
+      emoji.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
       document.body.appendChild(emoji);
       setTimeout(function() {
         if (emoji.parentNode) emoji.parentNode.removeChild(emoji);
       }, 3000);
+    }
+
+    // ── Sparkles on the gauge ──
+    function spawnSparkle() {
+      var sparkle = document.createElement('div');
+      sparkle.className = 'sparkle';
+      var gaugeRect = gaugeContainer.getBoundingClientRect();
+      sparkle.style.left = (gaugeRect.left + 30 + Math.random() * 60) + 'px';
+      sparkle.style.top = (gaugeRect.top + Math.random() * gaugeRect.height * 0.7) + 'px';
+      sparkle.style.background = Math.random() < 0.5 ? '#ffd700' : '#fff';
+      sparkle.style.width = (4 + Math.random() * 6) + 'px';
+      sparkle.style.height = sparkle.style.width;
+      document.body.appendChild(sparkle);
+      setTimeout(function() {
+        if (sparkle.parentNode) sparkle.parentNode.removeChild(sparkle);
+      }, 800);
+    }
+
+    // ── Confetti burst on start ──
+    function spawnConfettiBurst() {
+      var colors = ['#ff4500', '#ffd700', '#ff6600', '#ff0000', '#ffaa00', '#fff', '#ff3366'];
+      for (var i = 0; i < 20; i++) {
+        (function(idx) {
+          setTimeout(function() {
+            var confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = (30 + Math.random() * 40) + '%';
+            confetti.style.top = (35 + Math.random() * 15) + '%';
+            confetti.style.background = colors[idx % colors.length];
+            confetti.style.borderRadius = Math.random() < 0.5 ? '50%' : '2px';
+            confetti.style.width = (5 + Math.random() * 8) + 'px';
+            confetti.style.height = (5 + Math.random() * 8) + 'px';
+            document.body.appendChild(confetti);
+            setTimeout(function() {
+              if (confetti.parentNode) confetti.parentNode.removeChild(confetti);
+            }, 1500);
+          }, idx * 30);
+        })(i);
+      }
     }
   </script>
 </body>
