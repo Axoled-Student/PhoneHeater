@@ -152,12 +152,30 @@
       75% { transform: translateX(2px) scale(1.02); }
     }
 
-    .main-button:active {
-      transform: scale(0.95) !important;
+    .main-button.btn-inactive:hover:not(:active) {
+      animation: none;
+      transform: scale(1.08);
+      box-shadow: 0 15px 50px rgba(255, 69, 0, 0.7),
+                  0 0 100px rgba(255, 100, 0, 0.5),
+                  inset 0 -8px 20px rgba(0, 0, 0, 0.2);
     }
 
-    .main-button:hover:not(:active) {
-      transform: scale(1.08) !important;
+    .main-button.btn-inactive:active {
+      animation: none;
+      transform: scale(0.95);
+    }
+
+    .main-button.btn-active:hover:not(:active) {
+      animation: none;
+      transform: scale(1.08);
+      box-shadow: 0 15px 50px rgba(34, 102, 204, 0.8),
+                  0 0 120px rgba(68, 136, 255, 0.6),
+                  inset 0 -8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .main-button.btn-active:active {
+      animation: none;
+      transform: scale(0.95);
     }
 
     /* Slider */
@@ -365,6 +383,39 @@
 
     .hidden { display: none; }
 
+    /* Respect user motion preferences for accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      .main-button,
+      .main-button.btn-inactive,
+      .main-button.btn-active {
+        animation: none !important;
+      }
+      
+      .main-button.btn-inactive:hover:not(:active),
+      .main-button.btn-active:hover:not(:active) {
+        transform: none;
+      }
+      
+      .main-button.btn-inactive:active,
+      .main-button.btn-active:active {
+        transform: scale(0.98);
+      }
+      
+      .slider-value.pop {
+        animation: none;
+      }
+      
+      input[type="range"]::-webkit-slider-thumb,
+      input[type="range"]::-moz-range-thumb {
+        transition: transform 0s;
+      }
+      
+      input[type="range"]:active::-webkit-slider-thumb,
+      input[type="range"]:active::-moz-range-thumb {
+        transform: scale(1.1);
+      }
+    }
+
     /* Mobile optimizations */
     @media (max-width: 480px) {
       .container {
@@ -445,8 +496,8 @@
 
     <!-- Main Button -->
     <button class="main-button btn-inactive" id="mainButton" onclick="toggleHeating()" aria-label="啟動暖暖包">
-      <span id="buttonEmoji">🔥</span>
-      <span id="buttonText">啟動暖暖包</span>
+      <span id="buttonEmoji" aria-hidden="true">🔥</span>
+      <span id="buttonText" aria-hidden="true">啟動暖暖包</span>
     </button>
 
     <!-- Slider -->
