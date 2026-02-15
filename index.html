@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>手機版暖暖包 🔥 Phone Heater</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      min-height: 100vh;
+      overflow: hidden;
+      touch-action: manipulation;
+      user-select: none;
+      transition: background 0.8s ease;
+    }
+
+    .bg-cold {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    }
+
+    .bg-warm {
+      background: linear-gradient(135deg, #2d1b00 0%, #5c2a00 30%, #8b3a00 60%, #c44d00 100%);
+    }
+
+    .bg-hot {
+      background: linear-gradient(135deg, #4a0000 0%, #8b0000 30%, #cc3300 60%, #ff6600 100%);
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      color: #fff;
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      text-align: center;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 10px rgba(255, 100, 0, 0.5);
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: clamp(0.8rem, 2.5vw, 1rem);
+      margin-bottom: 24px;
+    }
+
+    /* Thermometer Gauge */
+    .gauge-container {
+      position: relative;
+      width: 120px;
+      height: 240px;
+      margin-bottom: 24px;
+    }
+
+    .gauge-bg {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px 20px 0 0;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .gauge-fill {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 0%;
+      background: linear-gradient(to top, #ff4500, #ff6600, #ff8c00, #ffd700);
+      border-radius: 0 0 18px 18px;
+      transition: height 0.5s ease;
+    }
+
+    .gauge-bulb {
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ff4500, #cc3300);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: box-shadow 0.5s ease;
+    }
+
+    .gauge-bulb.active {
+      box-shadow: 0 0 30px rgba(255, 69, 0, 0.8), 0 0 60px rgba(255, 69, 0, 0.4);
+      animation: pulse-glow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 30px rgba(255, 69, 0, 0.8), 0 0 60px rgba(255, 69, 0, 0.4); }
+      50% { box-shadow: 0 0 50px rgba(255, 69, 0, 1), 0 0 100px rgba(255, 69, 0, 0.6); }
+    }
+
+    .temp-display {
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .gauge-label {
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.7);
+      font-size: 0.7rem;
+      white-space: nowrap;
+    }
+
+    /* Slider */
+    .slider-section {
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 20px;
+    }
+
+    .slider-label {
+      color: #fff;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slider-value {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #ffd700;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 12px;
+      border-radius: 6px;
+      background: linear-gradient(to right, #334, #ff4500, #ff0000);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff, #ffd700);
+      border: 3px solid #ff6600;
+      box-shadow: 0 0 15px rgba(255, 100, 0, 0.6);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff, #ffd700);
+      border: 3px solid #ff6600;
+      box-shadow: 0 0 15px rgba(255, 100, 0, 0.6);
+      cursor: pointer;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 14px 48px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .btn-start {
+      background: linear-gradient(135deg, #ff6600, #ff4500);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(255, 69, 0, 0.5);
+    }
+
+    .btn-start:hover, .btn-start:active {
+      transform: scale(1.05);
+      box-shadow: 0 6px 30px rgba(255, 69, 0, 0.7);
+    }
+
+    .btn-stop {
+      background: linear-gradient(135deg, #555, #333);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-stop:hover, .btn-stop:active {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #666, #444);
+    }
+
+    /* Status */
+    .status-panel {
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 16px 24px;
+      width: 100%;
+      max-width: 320px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.85rem;
+    }
+
+    .status-row .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .dot-green { background: #4caf50; box-shadow: 0 0 6px #4caf50; }
+    .dot-red { background: #f44336; box-shadow: 0 0 6px #f44336; }
+    .dot-yellow { background: #ffc107; box-shadow: 0 0 6px #ffc107; }
+    .dot-gray { background: #666; }
+
+    .status-value {
+      font-weight: 600;
+      color: #ffd700;
+    }
+
+    /* Flame particles */
+    .flames {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .flame-particle {
+      position: absolute;
+      bottom: -20px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      opacity: 0;
+    }
+
+    @keyframes rise {
+      0% {
+        opacity: 0.8;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-100vh) scale(0.3);
+      }
+    }
+
+    /* Warning banner */
+    .warning {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.6);
+      color: rgba(255, 255, 255, 0.6);
+      text-align: center;
+      padding: 8px 16px;
+      font-size: 0.7rem;
+      z-index: 10;
+    }
+
+    /* Heat emoji overlay */
+    .heat-emoji {
+      position: fixed;
+      font-size: 2rem;
+      pointer-events: none;
+      z-index: 0;
+      animation: float-up 3s ease-out forwards;
+    }
+
+    @keyframes float-up {
+      0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(-200px) rotate(30deg); }
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body class="bg-cold">
+  <div class="flames" id="flames"></div>
+
+  <div class="container">
+    <h1>🔥 手機版暖暖包 🔥</h1>
+    <p class="subtitle">Phone Heater — 讓手機變成暖暖包！</p>
+
+    <!-- Thermometer Gauge -->
+    <div class="gauge-container">
+      <div class="gauge-label">🌡️ 溫度計</div>
+      <div class="gauge-bg">
+        <div class="gauge-fill" id="gaugeFill"></div>
+      </div>
+      <div class="gauge-bulb" id="gaugeBulb">
+        <span class="temp-display" id="tempDisplay">0%</span>
+      </div>
+    </div>
+
+    <!-- Slider -->
+    <div class="slider-section">
+      <div class="slider-label">
+        <span>🌡️ 溫度調節 Heat Level</span>
+        <span class="slider-value" id="sliderValue">50%</span>
+      </div>
+      <input type="range" id="heatSlider" min="0" max="100" value="50">
+    </div>
+
+    <!-- Start/Stop Buttons -->
+    <button class="btn btn-start" id="btnStart" onclick="startHeating()">
+      🔥 開始加熱 START
+    </button>
+    <button class="btn btn-stop hidden" id="btnStop" onclick="stopHeating()">
+      ❄️ 停止 STOP
+    </button>
+
+    <!-- Status Panel -->
+    <div class="status-panel">
+      <div class="status-row">
+        <span><span class="dot dot-gray" id="cpuDot"></span>CPU 負載</span>
+        <span class="status-value" id="cpuStatus">待機 Idle</span>
+      </div>
+      <div class="status-row">
+        <span><span class="dot dot-gray" id="gpuDot"></span>GPU 負載</span>
+        <span class="status-value" id="gpuStatus">待機 Idle</span>
+      </div>
+      <div class="status-row">
+        <span>⚙️ Workers</span>
+        <span class="status-value" id="workerCount">0</span>
+      </div>
+      <div class="status-row">
+        <span>📊 雜湊/秒</span>
+        <span class="status-value" id="hashRate">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="warning">
+    ⚠️ 本應用透過密集運算產生熱能。長時間使用請注意手機溫度，隨時可停止。
+    <br>This app generates heat through intensive computation. Monitor your phone temperature.
+  </div>
+
+  <script>
+    // ── State ──
+    let isRunning = false;
+    let heatPercent = 50;
+    let cpuWorkers = [];
+    let glContext = null;
+    let gpuAnimFrame = null;
+    let hashCount = 0;
+    let lastHashTime = Date.now();
+    let flameInterval = null;
+
+    // ── DOM refs ──
+    const slider = document.getElementById('heatSlider');
+    const sliderValue = document.getElementById('sliderValue');
+    const btnStart = document.getElementById('btnStart');
+    const btnStop = document.getElementById('btnStop');
+    const gaugeFill = document.getElementById('gaugeFill');
+    const gaugeBulb = document.getElementById('gaugeBulb');
+    const tempDisplay = document.getElementById('tempDisplay');
+    const cpuDot = document.getElementById('cpuDot');
+    const gpuDot = document.getElementById('gpuDot');
+    const cpuStatus = document.getElementById('cpuStatus');
+    const gpuStatus = document.getElementById('gpuStatus');
+    const workerCountEl = document.getElementById('workerCount');
+    const hashRateEl = document.getElementById('hashRate');
+    const flamesContainer = document.getElementById('flames');
+
+    // ── Slider ──
+    slider.addEventListener('input', function() {
+      heatPercent = parseInt(this.value, 10);
+      sliderValue.textContent = heatPercent + '%';
+      if (isRunning) {
+        adjustWorkers();
+      }
+    });
+
+    // ── CPU Worker via Blob URL ──
+    function createWorkerCode() {
+      const code = `
+        let running = true;
+        let counter = 0;
+
+        // Simple hash-like computation (SHA-like mixing)
+        function hashMix(data) {
+          let h = 0x811c9dc5;
+          for (let i = 0; i < data.length; i++) {
+            h ^= data[i];
+            h = Math.imul(h, 0x01000193);
+          }
+          return h >>> 0;
+        }
+
+        function heavyCompute() {
+          const buf = new Uint8Array(256);
+          while (running) {
+            // Fill buffer with pseudo-random data
+            for (let i = 0; i < 256; i++) {
+              buf[i] = (buf[i] + i + counter) & 0xff;
+            }
+            // Run multiple rounds of hashing
+            let result = 0;
+            for (let round = 0; round < 1000; round++) {
+              result = hashMix(buf);
+              buf[round & 0xff] = result & 0xff;
+            }
+            counter++;
+            if (counter % 500 === 0) {
+              postMessage({ type: 'hash', count: 500 });
+            }
+          }
+        }
+
+        self.onmessage = function(e) {
+          if (e.data === 'start') {
+            running = true;
+            heavyCompute();
+          } else if (e.data === 'stop') {
+            running = false;
+            self.close();
+          }
+        };
+      `;
+      const blob = new Blob([code], { type: 'application/javascript' });
+      return URL.createObjectURL(blob);
+    }
+
+    // ── Start/Stop ──
+    function startHeating() {
+      if (isRunning) return;
+      isRunning = true;
+      btnStart.classList.add('hidden');
+      btnStop.classList.remove('hidden');
+      gaugeBulb.classList.add('active');
+
+      adjustWorkers();
+      startGPU();
+      startFlames();
+      updateDisplay();
+    }
+
+    function stopHeating() {
+      isRunning = false;
+      btnStop.classList.add('hidden');
+      btnStart.classList.remove('hidden');
+      gaugeBulb.classList.remove('active');
+
+      // Stop CPU workers
+      cpuWorkers.forEach(function(w) {
+        w.postMessage('stop');
+        w.terminate();
+      });
+      cpuWorkers = [];
+
+      // Stop GPU
+      stopGPU();
+
+      // Stop flames
+      stopFlames();
+
+      // Reset display
+      hashCount = 0;
+      updateDots('gray', 'gray');
+      cpuStatus.textContent = '待機 Idle';
+      gpuStatus.textContent = '待機 Idle';
+      workerCountEl.textContent = '0';
+      hashRateEl.textContent = '0';
+      gaugeFill.style.height = '0%';
+      tempDisplay.textContent = '0%';
+      document.body.className = 'bg-cold';
+    }
+
+    // ── Adjust CPU Workers based on heat % ──
+    function adjustWorkers() {
+      var coreCount = navigator.hardwareConcurrency || 4;
+      var desired = Math.max(1, Math.round(coreCount * (heatPercent / 100)));
+
+      // Remove excess workers
+      while (cpuWorkers.length > desired) {
+        var w = cpuWorkers.pop();
+        w.postMessage('stop');
+        w.terminate();
+      }
+
+      // Add workers if needed
+      var workerUrl = null;
+      while (cpuWorkers.length < desired) {
+        if (!workerUrl) workerUrl = createWorkerCode();
+        var worker = new Worker(workerUrl);
+        worker.onmessage = function(e) {
+          if (e.data && e.data.type === 'hash') {
+            hashCount += e.data.count;
+          }
+        };
+        worker.postMessage('start');
+        cpuWorkers.push(worker);
+      }
+      if (workerUrl) URL.revokeObjectURL(workerUrl);
+
+      workerCountEl.textContent = cpuWorkers.length;
+    }
+
+    // ── GPU via WebGL heavy fragment shader ──
+    function startGPU() {
+      var canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 256;
+      canvas.style.display = 'none';
+      document.body.appendChild(canvas);
+
+      try {
+        glContext = canvas.getContext('webgl2') || canvas.getContext('webgl');
+      } catch(e) {
+        glContext = null;
+      }
+
+      if (!glContext) {
+        gpuStatus.textContent = '不可用 N/A';
+        gpuDot.className = 'dot dot-yellow';
+        return;
+      }
+
+      var gl = glContext;
+
+      // Vertex shader
+      var vsSrc = `
+        attribute vec2 a_pos;
+        void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
+      `;
+
+      // Heavy fragment shader — lots of math to keep GPU busy
+      var fsSrc = `
+        precision highp float;
+        uniform float u_time;
+        uniform float u_intensity;
+
+        float hash(vec2 p) {
+          vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+          p3 += dot(p3, p3.yzx + 33.33);
+          return fract((p3.x + p3.y) * p3.z);
+        }
+
+        void main() {
+          vec2 uv = gl_FragCoord.xy / 256.0;
+          float val = 0.0;
+          // Multiple iterations to increase GPU load
+          int iters = int(u_intensity * 200.0);
+          for (int i = 0; i < 200; i++) {
+            if (i >= iters) break;
+            float fi = float(i);
+            val += hash(uv * fi + u_time);
+            val = fract(val);
+          }
+          gl_FragColor = vec4(val, val * 0.5, val * 0.2, 1.0);
+        }
+      `;
+
+      function compileShader(src, type) {
+        var shader = gl.createShader(type);
+        gl.shaderSource(shader, src);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+          gl.deleteShader(shader);
+          return null;
+        }
+        return shader;
+      }
+
+      var vs = compileShader(vsSrc, gl.VERTEX_SHADER);
+      var fs = compileShader(fsSrc, gl.FRAGMENT_SHADER);
+
+      if (!vs || !fs) {
+        gpuStatus.textContent = '錯誤 Error';
+        gpuDot.className = 'dot dot-red';
+        return;
+      }
+
+      var program = gl.createProgram();
+      gl.attachShader(program, vs);
+      gl.attachShader(program, fs);
+      gl.linkProgram(program);
+
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        gpuStatus.textContent = '錯誤 Error';
+        gpuDot.className = 'dot dot-red';
+        return;
+      }
+
+      gl.useProgram(program);
+
+      // Full-screen quad
+      var buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+        -1, -1,  1, -1,  -1, 1,
+        -1,  1,  1, -1,   1, 1
+      ]), gl.STATIC_DRAW);
+
+      var aPos = gl.getAttribLocation(program, 'a_pos');
+      gl.enableVertexAttribArray(aPos);
+      gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+      var uTime = gl.getUniformLocation(program, 'u_time');
+      var uIntensity = gl.getUniformLocation(program, 'u_intensity');
+
+      var startTime = Date.now();
+
+      function renderLoop() {
+        if (!isRunning) return;
+        var elapsed = (Date.now() - startTime) / 1000.0;
+        gl.uniform1f(uTime, elapsed);
+        gl.uniform1f(uIntensity, heatPercent / 100.0);
+        // Draw multiple times for extra GPU load
+        var passes = Math.max(1, Math.floor(heatPercent / 10));
+        for (var p = 0; p < passes; p++) {
+          gl.uniform1f(uTime, elapsed + p * 0.1);
+          gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+        gl.finish();
+        gpuAnimFrame = requestAnimationFrame(renderLoop);
+      }
+
+      gpuDot.className = 'dot dot-green';
+      gpuStatus.textContent = '運行中 Active';
+      renderLoop();
+    }
+
+    function stopGPU() {
+      if (gpuAnimFrame) {
+        cancelAnimationFrame(gpuAnimFrame);
+        gpuAnimFrame = null;
+      }
+      if (glContext) {
+        var ext = glContext.getExtension('WEBGL_lose_context');
+        if (ext) ext.loseContext();
+        var canvas = glContext.canvas;
+        glContext = null;
+        if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
+      }
+    }
+
+    // ── Flame particles ──
+    function startFlames() {
+      flameInterval = setInterval(function() {
+        if (!isRunning) return;
+        var count = Math.floor(heatPercent / 15) + 1;
+        for (var i = 0; i < count; i++) {
+          spawnFlame();
+        }
+      }, 300);
+    }
+
+    function stopFlames() {
+      if (flameInterval) {
+        clearInterval(flameInterval);
+        flameInterval = null;
+      }
+      flamesContainer.innerHTML = '';
+    }
+
+    function spawnFlame() {
+      var particle = document.createElement('div');
+      particle.className = 'flame-particle';
+      var x = Math.random() * 100;
+      var size = 4 + Math.random() * 10;
+      var duration = 2 + Math.random() * 3;
+      var hue = 10 + Math.random() * 40; // orange-red range
+      particle.style.left = x + '%';
+      particle.style.width = size + 'px';
+      particle.style.height = size + 'px';
+      particle.style.background = 'hsl(' + hue + ', 100%, 55%)';
+      particle.style.animation = 'rise ' + duration + 's ease-out forwards';
+      particle.style.filter = 'blur(1px)';
+      flamesContainer.appendChild(particle);
+
+      setTimeout(function() {
+        if (particle.parentNode) particle.parentNode.removeChild(particle);
+      }, duration * 1000);
+    }
+
+    // ── Display update loop ──
+    function updateDisplay() {
+      if (!isRunning) return;
+
+      // Hash rate
+      var now = Date.now();
+      var elapsed = (now - lastHashTime) / 1000;
+      if (elapsed >= 1) {
+        var rate = Math.round(hashCount / elapsed);
+        hashRateEl.textContent = formatNumber(rate);
+        hashCount = 0;
+        lastHashTime = now;
+      }
+
+      // Gauge
+      gaugeFill.style.height = heatPercent + '%';
+      tempDisplay.textContent = heatPercent + '%';
+
+      // Background color transition
+      if (heatPercent < 30) {
+        document.body.className = 'bg-cold';
+      } else if (heatPercent < 70) {
+        document.body.className = 'bg-warm';
+      } else {
+        document.body.className = 'bg-hot';
+      }
+
+      // CPU status
+      if (cpuWorkers.length > 0) {
+        cpuDot.className = 'dot dot-green';
+        cpuStatus.textContent = '運行中 Active';
+      }
+
+      // Spawn emoji occasionally
+      if (Math.random() < 0.15 && heatPercent > 20) {
+        spawnEmoji();
+      }
+
+      requestAnimationFrame(updateDisplay);
+    }
+
+    function updateDots(cpuClass, gpuClass) {
+      cpuDot.className = 'dot dot-' + cpuClass;
+      gpuDot.className = 'dot dot-' + gpuClass;
+    }
+
+    function formatNumber(n) {
+      if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+      if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+      return String(n);
+    }
+
+    // ── Fun emoji bursts ──
+    var heatEmojis = ['🔥', '🌶️', '☀️', '💥', '✨', '🧡', '❤️‍🔥', '♨️'];
+
+    function spawnEmoji() {
+      var emoji = document.createElement('div');
+      emoji.className = 'heat-emoji';
+      emoji.textContent = heatEmojis[Math.floor(Math.random() * heatEmojis.length)];
+      emoji.style.left = (10 + Math.random() * 80) + '%';
+      emoji.style.top = (20 + Math.random() * 60) + '%';
+      emoji.style.fontSize = (1.2 + Math.random() * 1.5) + 'rem';
+      document.body.appendChild(emoji);
+      setTimeout(function() {
+        if (emoji.parentNode) emoji.parentNode.removeChild(emoji);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
