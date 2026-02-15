@@ -147,9 +147,8 @@
     }
 
     @keyframes btn-active-shake {
-      0%, 100% { transform: translateX(0) scale(1); }
-      25% { transform: translateX(-2px) scale(1.02); }
-      75% { transform: translateX(2px) scale(1.02); }
+      0%, 100% { transform: scale(1.02); }
+      50% { transform: scale(1); }
     }
 
     .main-button.btn-inactive:hover:not(:active) {
@@ -388,7 +387,7 @@
       .main-button,
       .main-button.btn-inactive,
       .main-button.btn-active {
-        animation: none !important;
+        animation: none;
       }
       
       .main-button.btn-inactive:hover:not(:active),
