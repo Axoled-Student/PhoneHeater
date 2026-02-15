@@ -313,13 +313,14 @@
 
     /* Status */
     .status-panel {
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 16px 24px;
+      border-radius: 20px;
+      padding: 20px 28px;
       width: 100%;
-      max-width: 320px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 340px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       animation: panel-fade-in 0.6s ease;
     }
 
@@ -332,17 +333,22 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 0;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 0.85rem;
+      padding: 10px 0;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .status-row:last-child {
+      border-bottom: none;
     }
 
     .status-row .dot {
       display: inline-block;
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      margin-right: 6px;
+      margin-right: 8px;
     }
 
     .dot-green { background: #4caf50; box-shadow: 0 0 6px #4caf50; animation: dot-blink 1s ease-in-out infinite; }
@@ -356,8 +362,16 @@
     }
 
     .status-value {
-      font-weight: 600;
+      font-weight: 700;
       color: #ffd700;
+      font-size: 1rem;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+
+    .status-label {
+      display: flex;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.9);
     }
 
     /* Flame particles */
@@ -436,12 +450,15 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(0, 0, 0, 0.6);
-      color: rgba(255, 255, 255, 0.6);
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      color: rgba(255, 255, 255, 0.85);
       text-align: center;
-      padding: 8px 16px;
-      font-size: 0.7rem;
+      padding: 12px 20px;
+      font-size: 0.75rem;
+      line-height: 1.4;
       z-index: 10;
+      border-top: 1px solid rgba(255, 165, 0, 0.2);
     }
 
     /* Heat emoji overlay */
@@ -475,6 +492,96 @@
     }
 
     .hidden { display: none; }
+
+    /* Mobile optimizations */
+    @media (max-width: 480px) {
+      .container {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: clamp(1.5rem, 6vw, 2rem);
+        margin-bottom: 6px;
+      }
+
+      .subtitle {
+        font-size: clamp(0.75rem, 3vw, 0.9rem);
+        margin-bottom: 20px;
+      }
+
+      .gauge-container {
+        width: 100px;
+        height: 220px;
+        margin-bottom: 20px;
+      }
+
+      .gauge-bg {
+        width: 36px;
+        height: 180px;
+      }
+
+      .gauge-bulb {
+        width: 54px;
+        height: 54px;
+      }
+
+      .temp-display {
+        font-size: 1.1rem;
+      }
+
+      .slider-section {
+        max-width: 300px;
+      }
+
+      .slider-label {
+        font-size: 0.9rem;
+      }
+
+      .slider-value {
+        font-size: 1.3rem;
+      }
+
+      .btn {
+        padding: 13px 40px;
+        font-size: 1.1rem;
+        margin-bottom: 14px;
+      }
+
+      .status-panel {
+        max-width: 100%;
+        padding: 18px 22px;
+        margin-bottom: 60px;
+      }
+
+      .status-row {
+        font-size: 0.9rem;
+        padding: 9px 0;
+      }
+
+      .status-value {
+        font-size: 0.95rem;
+      }
+
+      .warning {
+        font-size: 0.7rem;
+        padding: 10px 16px;
+        line-height: 1.5;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .status-panel {
+        padding: 16px 18px;
+      }
+
+      .status-row {
+        font-size: 0.85rem;
+      }
+
+      .status-value {
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
 <body class="bg-cold">
@@ -516,19 +623,19 @@
     <!-- Status Panel -->
     <div class="status-panel">
       <div class="status-row">
-        <span><span class="dot dot-gray" id="cpuDot"></span>處理器負載</span>
+        <span class="status-label"><span class="dot dot-gray" id="cpuDot"></span>處理器負載</span>
         <span class="status-value" id="cpuStatus">待機中</span>
       </div>
       <div class="status-row">
-        <span><span class="dot dot-gray" id="gpuDot"></span>顯示晶片負載</span>
+        <span class="status-label"><span class="dot dot-gray" id="gpuDot"></span>顯示晶片負載</span>
         <span class="status-value" id="gpuStatus">待機中</span>
       </div>
       <div class="status-row">
-        <span>⚙️ 工作執行緒</span>
+        <span class="status-label">⚙️ 工作執行緒</span>
         <span class="status-value" id="workerCount">0</span>
       </div>
       <div class="status-row">
-        <span>📊 每秒雜湊數</span>
+        <span class="status-label">📊 每秒雜湊數</span>
         <span class="status-value" id="hashRate">0</span>
       </div>
     </div>
