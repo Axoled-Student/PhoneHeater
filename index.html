@@ -67,133 +67,117 @@
       100% { opacity: 1; letter-spacing: 2px; }
     }
 
-    /* Thermometer Gauge */
-    .gauge-container {
-      position: relative;
-      width: 120px;
-      height: 240px;
-      margin-bottom: 24px;
-    }
-
-    .gauge-bg {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40px;
-      height: 200px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px 20px 0 0;
-      overflow: hidden;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .gauge-fill {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 0%;
-      background: linear-gradient(to top, #ff4500, #ff6600, #ff8c00, #ffd700);
-      border-radius: 0 0 18px 18px;
-      transition: height 0.5s ease;
-    }
-
-    .gauge-fill.active {
-      animation: gauge-shimmer 1.5s ease-in-out infinite alternate;
-    }
-
-    @keyframes gauge-shimmer {
-      0% { filter: brightness(1); }
-      100% { filter: brightness(1.4); }
-    }
-
-    .gauge-bulb {
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 60px;
+    /* Main Button - Large and Prominent */
+    .main-button {
+      width: 280px;
+      height: 280px;
       border-radius: 50%;
-      background: radial-gradient(circle, #ff4500, #cc3300);
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      border: none;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      margin-bottom: 60px;
+      letter-spacing: 2px;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: box-shadow 0.5s ease;
+      text-align: center;
+      line-height: 1.3;
     }
 
-    .gauge-bulb.active {
-      box-shadow: 0 0 30px rgba(255, 69, 0, 0.8), 0 0 60px rgba(255, 69, 0, 0.4);
-      animation: pulse-glow 1.5s ease-in-out infinite, bulb-wiggle 0.5s ease-in-out infinite;
-    }
-
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 30px rgba(255, 69, 0, 0.8), 0 0 60px rgba(255, 69, 0, 0.4); }
-      50% { box-shadow: 0 0 50px rgba(255, 69, 0, 1), 0 0 100px rgba(255, 69, 0, 0.6); }
-    }
-
-    @keyframes bulb-wiggle {
-      0%, 100% { transform: translateX(-50%) rotate(0deg); }
-      25% { transform: translateX(-50%) rotate(2deg); }
-      75% { transform: translateX(-50%) rotate(-2deg); }
-    }
-
-    .temp-display {
-      color: #fff;
-      font-size: 1.2rem;
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(0,0,0,0.5);
-    }
-
-    .gauge-label {
+    .main-button::before {
+      content: '';
       position: absolute;
-      top: -5px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(255,255,255,0.7);
-      font-size: 0.7rem;
-      white-space: nowrap;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+      animation: btn-shine 3s ease-in-out infinite;
     }
 
-    /* Sparkle on gauge */
-    .sparkle {
+    .main-button::after {
+      content: '';
       position: absolute;
-      width: 6px;
-      height: 6px;
+      inset: 8px;
       border-radius: 50%;
-      background: #fff;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), transparent);
       pointer-events: none;
-      animation: sparkle-pop 0.8s ease-out forwards;
-      z-index: 5;
     }
 
-    @keyframes sparkle-pop {
-      0% { opacity: 1; transform: scale(0) rotate(0deg); }
-      50% { opacity: 1; transform: scale(1.5) rotate(180deg); }
-      100% { opacity: 0; transform: scale(0) rotate(360deg); }
+    .main-button.btn-inactive {
+      background: linear-gradient(135deg, #ff6600, #ff4500, #ff2200);
+      box-shadow: 0 10px 40px rgba(255, 69, 0, 0.5),
+                  0 0 60px rgba(255, 100, 0, 0.3),
+                  inset 0 -8px 20px rgba(0, 0, 0, 0.2);
+      animation: btn-pulse 2s ease-in-out infinite;
+    }
+
+    .main-button.btn-active {
+      background: linear-gradient(135deg, #2266cc, #4488ff, #2266cc);
+      box-shadow: 0 10px 40px rgba(34, 102, 204, 0.6),
+                  0 0 80px rgba(68, 136, 255, 0.4),
+                  inset 0 -8px 20px rgba(0, 0, 0, 0.2);
+      animation: btn-active-shake 0.3s ease-in-out infinite;
+    }
+
+    @keyframes btn-pulse {
+      0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 10px 40px rgba(255, 69, 0, 0.5),
+                    0 0 60px rgba(255, 100, 0, 0.3),
+                    inset 0 -8px 20px rgba(0, 0, 0, 0.2);
+      }
+      50% { 
+        transform: scale(1.05);
+        box-shadow: 0 15px 50px rgba(255, 69, 0, 0.7),
+                    0 0 100px rgba(255, 100, 0, 0.5),
+                    inset 0 -8px 20px rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    @keyframes btn-active-shake {
+      0%, 100% { transform: translateX(0) scale(1); }
+      25% { transform: translateX(-2px) scale(1.02); }
+      75% { transform: translateX(2px) scale(1.02); }
+    }
+
+    .main-button:active {
+      transform: scale(0.95);
+    }
+
+    .main-button:hover {
+      transform: scale(1.08);
     }
 
     /* Slider */
     .slider-section {
       width: 100%;
-      max-width: 320px;
+      max-width: 380px;
       margin-bottom: 20px;
     }
 
     .slider-label {
       color: #fff;
-      font-size: 0.95rem;
-      margin-bottom: 8px;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
+      gap: 12px;
+      font-weight: 600;
     }
 
     .slider-value {
-      font-size: 1.4rem;
+      font-size: 2rem;
       font-weight: bold;
       color: #ffd700;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.6),
+                   0 2px 10px rgba(0, 0, 0, 0.3);
       transition: transform 0.2s ease;
     }
 
@@ -203,175 +187,57 @@
 
     @keyframes value-pop {
       0% { transform: scale(1); }
-      50% { transform: scale(1.3); }
-      100% { transform: scale(1); }
+      50% { transform: scale(1.3) rotate(5deg); }
+      100% { transform: scale(1) rotate(0deg); }
     }
 
     input[type="range"] {
       -webkit-appearance: none;
       appearance: none;
       width: 100%;
-      height: 12px;
-      border-radius: 6px;
+      height: 16px;
+      border-radius: 8px;
       background: linear-gradient(to right, #334, #ff4500, #ff0000);
       outline: none;
       cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3),
+                  inset 0 2px 5px rgba(0, 0, 0, 0.2);
     }
 
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: radial-gradient(circle, #fff, #ffd700);
-      border: 3px solid #ff6600;
-      box-shadow: 0 0 15px rgba(255, 100, 0, 0.6);
+      background: radial-gradient(circle at 30% 30%, #fff, #ffd700);
+      border: 4px solid #ff6600;
+      box-shadow: 0 0 20px rgba(255, 100, 0, 0.8),
+                  0 4px 15px rgba(0, 0, 0, 0.3);
       cursor: pointer;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     input[type="range"]:active::-webkit-slider-thumb {
-      transform: scale(1.2);
+      transform: scale(1.3);
+      box-shadow: 0 0 30px rgba(255, 100, 0, 1),
+                  0 4px 20px rgba(0, 0, 0, 0.4);
     }
 
     input[type="range"]::-moz-range-thumb {
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: radial-gradient(circle, #fff, #ffd700);
-      border: 3px solid #ff6600;
-      box-shadow: 0 0 15px rgba(255, 100, 0, 0.6);
+      background: radial-gradient(circle at 30% 30%, #fff, #ffd700);
+      border: 4px solid #ff6600;
+      box-shadow: 0 0 20px rgba(255, 100, 0, 0.8),
+                  0 4px 15px rgba(0, 0, 0, 0.3);
       cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    /* Buttons */
-    .btn {
-      padding: 14px 48px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      letter-spacing: 2px;
-      margin-bottom: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
-      animation: btn-shine 3s ease-in-out infinite;
-    }
-
-    @keyframes btn-shine {
-      0% { transform: translateX(-100%) rotate(25deg); }
-      100% { transform: translateX(100%) rotate(25deg); }
-    }
-
-    .btn-start {
-      background: linear-gradient(135deg, #ff6600, #ff4500);
-      color: #fff;
-      box-shadow: 0 4px 20px rgba(255, 69, 0, 0.5);
-      animation: btn-breathe 2s ease-in-out infinite;
-    }
-
-    @keyframes btn-breathe {
-      0%, 100% { box-shadow: 0 4px 20px rgba(255, 69, 0, 0.5); transform: scale(1); }
-      50% { box-shadow: 0 6px 30px rgba(255, 69, 0, 0.7); transform: scale(1.03); }
-    }
-
-    .btn-start:hover, .btn-start:active {
-      transform: scale(1.08);
-      box-shadow: 0 6px 30px rgba(255, 69, 0, 0.7);
-    }
-
-    .btn-stop {
-      background: linear-gradient(135deg, #4488ff, #2266cc);
-      color: #fff;
-      box-shadow: 0 4px 15px rgba(34, 102, 204, 0.4);
-      animation: btn-shake 0.4s ease-in-out infinite;
-    }
-
-    @keyframes btn-shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-3px); }
-      75% { transform: translateX(3px); }
-    }
-
-    .btn-stop:hover, .btn-stop:active {
-      transform: scale(1.05);
-      background: linear-gradient(135deg, #5599ff, #3377dd);
-    }
-
-    /* Status */
-    .status-panel {
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 20px 28px;
-      width: 100%;
-      max-width: 340px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      animation: panel-fade-in 0.6s ease;
-    }
-
-    @keyframes panel-fade-in {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    .status-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 0.95rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .status-row:last-child {
-      border-bottom: none;
-    }
-
-    .status-row .dot {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      margin-right: 8px;
-    }
-
-    .dot-green { background: #4caf50; box-shadow: 0 0 6px #4caf50; animation: dot-blink 1s ease-in-out infinite; }
-    .dot-red { background: #f44336; box-shadow: 0 0 6px #f44336; }
-    .dot-yellow { background: #ffc107; box-shadow: 0 0 6px #ffc107; animation: dot-blink 2s ease-in-out infinite; }
-    .dot-gray { background: #666; }
-
-    @keyframes dot-blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    .status-value {
-      font-weight: 700;
-      color: #ffd700;
-      font-size: 1rem;
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-    }
-
-    .status-label {
-      display: flex;
-      align-items: center;
-      color: rgba(255, 255, 255, 0.9);
+    input[type="range"]:active::-moz-range-thumb {
+      transform: scale(1.3);
     }
 
     /* Flame particles */
@@ -506,60 +372,40 @@
 
       .subtitle {
         font-size: clamp(0.75rem, 3vw, 0.9rem);
-        margin-bottom: 20px;
+        margin-bottom: 30px;
       }
 
-      .gauge-container {
-        width: 100px;
-        height: 220px;
-        margin-bottom: 20px;
-      }
-
-      .gauge-bg {
-        width: 36px;
-        height: 180px;
-      }
-
-      .gauge-bulb {
-        width: 54px;
-        height: 54px;
-      }
-
-      .temp-display {
-        font-size: 1.1rem;
+      .main-button {
+        width: 240px;
+        height: 240px;
+        font-size: 1.7rem;
+        margin-bottom: 50px;
       }
 
       .slider-section {
-        max-width: 300px;
+        max-width: 90%;
       }
 
       .slider-label {
-        font-size: 0.9rem;
+        font-size: 1rem;
       }
 
       .slider-value {
-        font-size: 1.3rem;
+        font-size: 1.8rem;
       }
 
-      .btn {
-        padding: 13px 40px;
-        font-size: 1.1rem;
-        margin-bottom: 14px;
+      input[type="range"] {
+        height: 14px;
       }
 
-      .status-panel {
-        max-width: 100%;
-        padding: 18px 22px;
-        margin-bottom: 60px;
+      input[type="range"]::-webkit-slider-thumb {
+        width: 36px;
+        height: 36px;
       }
 
-      .status-row {
-        font-size: 0.9rem;
-        padding: 9px 0;
-      }
-
-      .status-value {
-        font-size: 0.95rem;
+      input[type="range"]::-moz-range-thumb {
+        width: 36px;
+        height: 36px;
       }
 
       .warning {
@@ -570,16 +416,15 @@
     }
 
     @media (max-width: 360px) {
-      .status-panel {
-        padding: 16px 18px;
+      .main-button {
+        width: 200px;
+        height: 200px;
+        font-size: 1.5rem;
+        margin-bottom: 40px;
       }
 
-      .status-row {
-        font-size: 0.85rem;
-      }
-
-      .status-value {
-        font-size: 0.9rem;
+      .slider-value {
+        font-size: 1.6rem;
       }
     }
   </style>
@@ -592,52 +437,17 @@
     <h1>🔥 手機版暖暖包 🔥</h1>
     <p class="subtitle">讓你的手機變成暖暖包！</p>
 
-    <!-- Thermometer Gauge -->
-    <div class="gauge-container" id="gaugeContainer">
-      <div class="gauge-label">🌡️ 溫度計</div>
-      <div class="gauge-bg">
-        <div class="gauge-fill" id="gaugeFill"></div>
-      </div>
-      <div class="gauge-bulb" id="gaugeBulb">
-        <span class="temp-display" id="tempDisplay">0%</span>
-      </div>
-    </div>
+    <!-- Main Button -->
+    <button class="main-button btn-inactive" id="mainButton" onclick="toggleHeating()">
+      🔥<br>啟動暖暖包
+    </button>
 
     <!-- Slider -->
     <div class="slider-section">
       <div class="slider-label">
-        <span>🌡️ 溫度調節</span>
         <span class="slider-value" id="sliderValue">50%</span>
       </div>
       <input type="range" id="heatSlider" min="0" max="100" value="50">
-    </div>
-
-    <!-- Start/Stop Buttons -->
-    <button class="btn btn-start" id="btnStart" onclick="startHeating()">
-      🔥 開始加熱
-    </button>
-    <button class="btn btn-stop hidden" id="btnStop" onclick="stopHeating()">
-      ❄️ 冷卻停止
-    </button>
-
-    <!-- Status Panel -->
-    <div class="status-panel">
-      <div class="status-row">
-        <span class="status-label"><span class="dot dot-gray" id="cpuDot"></span>處理器負載</span>
-        <span class="status-value" id="cpuStatus">待機中</span>
-      </div>
-      <div class="status-row">
-        <span class="status-label"><span class="dot dot-gray" id="gpuDot"></span>顯示晶片負載</span>
-        <span class="status-value" id="gpuStatus">待機中</span>
-      </div>
-      <div class="status-row">
-        <span class="status-label">⚙️ 工作執行緒</span>
-        <span class="status-value" id="workerCount">0</span>
-      </div>
-      <div class="status-row">
-        <span class="status-label">📊 每秒雜湊數</span>
-        <span class="status-value" id="hashRate">0</span>
-      </div>
     </div>
   </div>
 
@@ -659,20 +469,9 @@
     // ── DOM refs ──
     const slider = document.getElementById('heatSlider');
     const sliderValue = document.getElementById('sliderValue');
-    const btnStart = document.getElementById('btnStart');
-    const btnStop = document.getElementById('btnStop');
-    const gaugeFill = document.getElementById('gaugeFill');
-    const gaugeBulb = document.getElementById('gaugeBulb');
-    const tempDisplay = document.getElementById('tempDisplay');
-    const cpuDot = document.getElementById('cpuDot');
-    const gpuDot = document.getElementById('gpuDot');
-    const cpuStatus = document.getElementById('cpuStatus');
-    const gpuStatus = document.getElementById('gpuStatus');
-    const workerCountEl = document.getElementById('workerCount');
-    const hashRateEl = document.getElementById('hashRate');
+    const mainButton = document.getElementById('mainButton');
     const flamesContainer = document.getElementById('flames');
     const heatWave = document.getElementById('heatWave');
-    const gaugeContainer = document.getElementById('gaugeContainer');
 
     // ── Slider ──
     slider.addEventListener('input', function() {
@@ -737,13 +536,21 @@
     }
 
     // ── Start/Stop ──
+    // ── Toggle Heating ──
+    function toggleHeating() {
+      if (isRunning) {
+        stopHeating();
+      } else {
+        startHeating();
+      }
+    }
+
     function startHeating() {
       if (isRunning) return;
       isRunning = true;
-      btnStart.classList.add('hidden');
-      btnStop.classList.remove('hidden');
-      gaugeBulb.classList.add('active');
-      gaugeFill.classList.add('active');
+      mainButton.classList.remove('btn-inactive');
+      mainButton.classList.add('btn-active');
+      mainButton.innerHTML = '❄️<br>冷卻停止';
       heatWave.classList.add('active');
 
       spawnConfettiBurst();
@@ -755,10 +562,9 @@
 
     function stopHeating() {
       isRunning = false;
-      btnStop.classList.add('hidden');
-      btnStart.classList.remove('hidden');
-      gaugeBulb.classList.remove('active');
-      gaugeFill.classList.remove('active');
+      mainButton.classList.remove('btn-active');
+      mainButton.classList.add('btn-inactive');
+      mainButton.innerHTML = '🔥<br>啟動暖暖包';
       heatWave.classList.remove('active');
 
       // Stop CPU workers
@@ -776,13 +582,6 @@
 
       // Reset display
       hashCount = 0;
-      updateDots('gray', 'gray');
-      cpuStatus.textContent = '待機中';
-      gpuStatus.textContent = '待機中';
-      workerCountEl.textContent = '0';
-      hashRateEl.textContent = '0';
-      gaugeFill.style.height = '0%';
-      tempDisplay.textContent = '0%';
       document.body.className = 'bg-cold';
     }
 
@@ -812,8 +611,6 @@
         cpuWorkers.push(worker);
       }
       if (workerUrl) URL.revokeObjectURL(workerUrl);
-
-      workerCountEl.textContent = cpuWorkers.length;
     }
 
     // ── GPU via WebGL heavy fragment shader ──
@@ -831,8 +628,6 @@
       }
 
       if (!glContext) {
-        gpuStatus.textContent = '不可用';
-        gpuDot.className = 'dot dot-yellow';
         return;
       }
 
@@ -886,8 +681,6 @@
       var fs = compileShader(fsSrc, gl.FRAGMENT_SHADER);
 
       if (!vs || !fs) {
-        gpuStatus.textContent = '錯誤';
-        gpuDot.className = 'dot dot-red';
         return;
       }
 
@@ -897,8 +690,6 @@
       gl.linkProgram(program);
 
       if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        gpuStatus.textContent = '錯誤';
-        gpuDot.className = 'dot dot-red';
         return;
       }
 
@@ -936,8 +727,6 @@
         gpuAnimFrame = requestAnimationFrame(renderLoop);
       }
 
-      gpuDot.className = 'dot dot-green';
-      gpuStatus.textContent = '全力運轉中 🔥';
       renderLoop();
     }
 
@@ -996,22 +785,9 @@
     }
 
     // ── Display update loop ──
+    // ── Display update loop ──
     function updateDisplay() {
       if (!isRunning) return;
-
-      // Hash rate
-      var now = Date.now();
-      var elapsed = (now - lastHashTime) / 1000;
-      if (elapsed >= 1) {
-        var rate = Math.round(hashCount / elapsed);
-        hashRateEl.textContent = formatNumber(rate);
-        hashCount = 0;
-        lastHashTime = now;
-      }
-
-      // Gauge
-      gaugeFill.style.height = heatPercent + '%';
-      tempDisplay.textContent = heatPercent + '%';
 
       // Background color transition
       if (heatPercent < 30) {
@@ -1022,34 +798,12 @@
         document.body.className = 'bg-hot';
       }
 
-      // CPU status
-      if (cpuWorkers.length > 0) {
-        cpuDot.className = 'dot dot-green';
-        cpuStatus.textContent = '全力運轉中 🔥';
-      }
-
-      // Sparkles on gauge
-      if (Math.random() < 0.1 && heatPercent > 30) {
-        spawnSparkle();
-      }
-
       // Spawn emoji occasionally
       if (Math.random() < 0.15 && heatPercent > 20) {
         spawnEmoji();
       }
 
       requestAnimationFrame(updateDisplay);
-    }
-
-    function updateDots(cpuClass, gpuClass) {
-      cpuDot.className = 'dot dot-' + cpuClass;
-      gpuDot.className = 'dot dot-' + gpuClass;
-    }
-
-    function formatNumber(n) {
-      if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-      if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
-      return String(n);
     }
 
     // ── Fun emoji bursts ──
@@ -1069,21 +823,6 @@
     }
 
     // ── Sparkles on the gauge ──
-    function spawnSparkle() {
-      var sparkle = document.createElement('div');
-      sparkle.className = 'sparkle';
-      var gaugeRect = gaugeContainer.getBoundingClientRect();
-      sparkle.style.left = (gaugeRect.left + 30 + Math.random() * 60) + 'px';
-      sparkle.style.top = (gaugeRect.top + Math.random() * gaugeRect.height * 0.7) + 'px';
-      sparkle.style.background = Math.random() < 0.5 ? '#ffd700' : '#fff';
-      sparkle.style.width = (4 + Math.random() * 6) + 'px';
-      sparkle.style.height = sparkle.style.width;
-      document.body.appendChild(sparkle);
-      setTimeout(function() {
-        if (sparkle.parentNode) sparkle.parentNode.removeChild(sparkle);
-      }, 800);
-    }
-
     // ── Confetti burst on start ──
     function spawnConfettiBurst() {
       var colors = ['#ff4500', '#ffd700', '#ff6600', '#ff0000', '#ffaa00', '#fff', '#ff3366'];
