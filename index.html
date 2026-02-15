@@ -83,10 +83,11 @@
       margin-bottom: 60px;
       letter-spacing: 2px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      line-height: 1.3;
+      gap: 8px;
     }
 
     .main-button::before {
@@ -443,8 +444,9 @@
     <p class="subtitle">讓你的手機變成暖暖包！</p>
 
     <!-- Main Button -->
-    <button class="main-button btn-inactive" id="mainButton" onclick="toggleHeating()">
-      🔥<br>啟動暖暖包
+    <button class="main-button btn-inactive" id="mainButton" onclick="toggleHeating()" aria-label="啟動暖暖包">
+      <span id="buttonEmoji">🔥</span>
+      <span id="buttonText">啟動暖暖包</span>
     </button>
 
     <!-- Slider -->
@@ -554,7 +556,9 @@
       isRunning = true;
       mainButton.classList.remove('btn-inactive');
       mainButton.classList.add('btn-active');
-      mainButton.innerHTML = '❄️<br>冷卻停止';
+      mainButton.setAttribute('aria-label', '冷卻停止');
+      document.getElementById('buttonEmoji').textContent = '❄️';
+      document.getElementById('buttonText').textContent = '冷卻停止';
       heatWave.classList.add('active');
 
       spawnConfettiBurst();
@@ -568,7 +572,9 @@
       isRunning = false;
       mainButton.classList.remove('btn-active');
       mainButton.classList.add('btn-inactive');
-      mainButton.innerHTML = '🔥<br>啟動暖暖包';
+      mainButton.setAttribute('aria-label', '啟動暖暖包');
+      document.getElementById('buttonEmoji').textContent = '🔥';
+      document.getElementById('buttonText').textContent = '啟動暖暖包';
       heatWave.classList.remove('active');
 
       // Stop CPU workers
