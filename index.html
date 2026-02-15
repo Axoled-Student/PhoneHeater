@@ -390,6 +390,10 @@
         animation: none;
       }
       
+      .main-button::before {
+        animation: none;
+      }
+      
       .main-button.btn-inactive:hover:not(:active),
       .main-button.btn-active:hover:not(:active) {
         transform: none;
@@ -406,7 +410,7 @@
       
       input[type="range"]::-webkit-slider-thumb,
       input[type="range"]::-moz-range-thumb {
-        transition: transform 0s;
+        transition: transform 0.1s ease;
       }
       
       input[type="range"]:active::-webkit-slider-thumb,
